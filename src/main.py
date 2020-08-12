@@ -8,7 +8,8 @@ import datetime
 
 if __name__ == "__main__":
     
-    json_path = "E:\Github\My Projects\soap-request-builder\sample_requests\sample1.json"
+    dirname = os.path.dirname(__file__)
+    json_path = os.path.join(dirname, '..\sample_requests\sample1.json')
     
     if (path.exists(json_path)):
         with open(json_path) as json_file:
