@@ -1,24 +1,32 @@
-import os.path
+"""
+Main module to build a SOAP request from a JSON sample file.
+"""
+
 from os import path
 import json
-import copy
-from constants import CustomerInformationAttributes, ComplianceAttributes
 from start_transaction_request_builder import StartTransactionRequestBuilder
-import datetime
 
-if __name__ == "__main__":
-    
-    dirname = os.path.dirname(__file__)
-    json_path = os.path.join(dirname, '..\sample_requests\sample1.json')
-    
-    if (path.exists(json_path)):
-        with open(json_path) as json_file:
-            try:
-                json_content = json.load(json_file)
-                language_code = "en"
-                start_transaction_request = StartTransactionRequestBuilder(json_content, language_code).build()
-                print(start_transaction_request)
-            except ValueError:
-                print("Given JSON file is invalid. Content of the file should be a valid JSON object.")
+
+def get_sample_file_path():
+    dirname = path.dirname(path.dirname(__file__))
+    return path.join(dirname, "sample_requests", "sample1.json")
+
+
+def load_json(file_path):
+    with open(file_path) as json_file:
+        return json.load(json_file)
+
+
+def main():
+    json_path = get_sample_file_path()
+    if path.exists(json_path):
+        json_content = load_json(json_path)
+        request_builder = StartTransactionRequestBuilder(json_content, "en")
+        print(request_builder.build())
+
     else:
         print(f"File {json_path} does not exist.")
+
+
+if __name__ == "__main__":
+    main()

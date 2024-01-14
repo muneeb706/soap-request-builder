@@ -1,3 +1,25 @@
+"""
+Module for building SOAP requests from JSON data.
+
+This module provides a base SoapRequestBuilder class for converting 
+a JSON request body into an XML SOAP request. It handles mapping 
+JSON keys to XML tags and attributes, and populating the XML elements
+with data from the JSON.
+
+The SoapRequestBuilder class initializes mappings between JSON and XML,
+and provides abstract methods for creating the SOAP envelope, header 
+and body elements. Concrete builder classes inherit from this base 
+class and customize the request generation for specific services or APIs.
+
+Classes that inherit from SoapRequestBuilder must implement the 
+_create_body_element() method to populate the SOAP body for the 
+particular request type.
+
+The module also defines common namespaces and language mappings used
+across different SOAP requests. Exceptions are defined for errors 
+during request building.
+"""
+
 import logging
 import xml.etree.ElementTree as ElementTree
 from abc import ABC, abstractmethod
@@ -9,8 +31,9 @@ log = logging.getLogger(__name__)
 
 
 class SoapRequestBuilder(ABC):
-
-    def __init__(self, json_request_body, input_language, attributes_mappings, tags_mappings):
+    def __init__(
+        self, json_request_body, input_language, attributes_mappings, tags_mappings
+    ):
         self._processing_language = LANGUAGE_MAPPINGS[input_language]
         self._json_request_body = json_request_body
         self._attributes_mappings = attributes_mappings
@@ -26,20 +49,24 @@ class SoapRequestBuilder(ABC):
 
     @staticmethod
     def __create_root_element():
-        soapenv = ElementTree.Element('soapenv:Envelope', {
-            'xmlns:soapenv': NAMESPACES['soapenv'],
-            'xmlns:v3': NAMESPACES['v3']
-        })
+        soapenv = ElementTree.Element(
+            "soapenv:Envelope",
+            {"xmlns:soapenv": NAMESPACES["soapenv"], "xmlns:v3": NAMESPACES["v3"]},
+        )
         return soapenv
 
     def __create_header_element(self):
-        soap_request_header = ElementTree.SubElement(self._soap_request, 'soapenv:Header')
-        security = ElementTree.SubElement(soap_request_header, 'wsse:Security',
-                                          {'soapenv:mustUnderstand': "1",
-                                           'xmlns:wsse': NAMESPACES['wsse']})
-        username_token = ElementTree.SubElement(security, 'wsse:UsernameToken')
-        username = ElementTree.SubElement(username_token, 'wsse:Username')
-        password = ElementTree.SubElement(username_token, 'wsse:Password')
+        soap_request_header = ElementTree.SubElement(
+            self._soap_request, "soapenv:Header"
+        )
+        security = ElementTree.SubElement(
+            soap_request_header,
+            "wsse:Security",
+            {"soapenv:mustUnderstand": "1", "xmlns:wsse": NAMESPACES["wsse"]},
+        )
+        username_token = ElementTree.SubElement(security, "wsse:UsernameToken")
+        username = ElementTree.SubElement(username_token, "wsse:Username")
+        password = ElementTree.SubElement(username_token, "wsse:Password")
         username.text = "username"
         password.text = "password"
 
@@ -68,8 +95,9 @@ class SoapRequestBuilder(ABC):
                         self.__create_array_elements(key, parent_element, value)
                     # if an item is not an object of any type
                     elif key in self._tags_mappings:
-                        current_element = ElementTree.SubElement(parent_element,
-                                                                 'v3:' + self._tags_mappings[key])
+                        current_element = ElementTree.SubElement(
+                            parent_element, "v3:" + self._tags_mappings[key]
+                        )
                         current_element.text = value
         except KeyError as error:
             log.error(str(error))
@@ -80,7 +108,8 @@ class SoapRequestBuilder(ABC):
             self.__create_object_element(key, parent_element, val)
 
     def __create_object_element(self, key, parent_element, value):
-        current_element = ElementTree.SubElement(parent_element,
-                                                 'v3:' + self._tags_mappings[key])
+        current_element = ElementTree.SubElement(
+            parent_element, "v3:" + self._tags_mappings[key]
+        )
         self._add_arguments_to_request_body(current_element, value)
         return current_element
