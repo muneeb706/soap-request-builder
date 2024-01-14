@@ -1,9 +1,7 @@
 import unittest
 from unittest.mock import patch
 import json
-from soap_request_builder.start_transaction_request_builder import (
-    StartTransactionRequestBuilder,
-)
+from soap_request_builder import StartTransactionRequestBuilder
 
 
 class TestStartTransactionRequestBuilder(unittest.TestCase):
@@ -15,7 +13,7 @@ class TestStartTransactionRequestBuilder(unittest.TestCase):
             self.json_request_body, self.input_language
         )
 
-    @patch("soap_request_builder.soap_request_builder.SoapRequestBuilder.build")
+    @patch("soap_request_builder.soap_request_builder_base.SoapRequestBuilder.build")
     def test_build(self, mock_super_build):
         # Mock the build method of the superclass
         mock_super_build.return_value = "mocked SOAP request"

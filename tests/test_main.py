@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, mock_open
-from soap_request_builder.main import get_sample_file_path, load_json, main
+from main import get_sample_file_path, load_json, main
 
 
 class TestMain(unittest.TestCase):
@@ -23,7 +23,7 @@ class TestMain(unittest.TestCase):
         # Assert that the function correctly loaded the JSON data
         self.assertEqual(data, {"key": "value"})
 
-    @patch("soap_request_builder.main.StartTransactionRequestBuilder")
+    @patch("main.StartTransactionRequestBuilder")
     def test_main(self, mock_builder):
         # Mock the StartTransactionRequestBuilder's build method
         mock_builder.return_value.build.return_value = "request"
