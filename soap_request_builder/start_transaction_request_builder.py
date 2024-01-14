@@ -16,8 +16,8 @@ generation specifically for Start Transaction requests.
 import xml.etree.ElementTree as ElementTree
 from enum import Enum
 
-from constants import CustomerInformationAttributes, ComplianceAttributes
-from soap_request_builder import SoapRequestBuilder
+from .constants import CustomerInformationAttributes, ComplianceAttributes
+from .soap_request_builder import SoapRequestBuilder
 
 
 class StartTransactionRequestBuilder(SoapRequestBuilder):

@@ -24,8 +24,8 @@ import logging
 import xml.etree.ElementTree as ElementTree
 from abc import ABC, abstractmethod
 
-from constants import LANGUAGE_MAPPINGS, NAMESPACES
-from exceptions import SOAPRequestBuildFailedError
+from .constants import LANGUAGE_MAPPINGS, NAMESPACES
+from .exceptions import SOAPRequestBuildFailedError
 
 log = logging.getLogger(__name__)
 
